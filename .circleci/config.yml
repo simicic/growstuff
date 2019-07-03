@@ -60,7 +60,7 @@ jobs: # a collection of steps
       - checkout
       - run:
         name: Install Linters
-        command: ./script/insall_linters
+        command: ./script/install_linters.sh
       - run:
         name: Overcommit
         command: overcommit -r

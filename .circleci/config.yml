@@ -1,39 +1,34 @@
 ---
 version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
-  rubydeps:
-    docker:
-      - image: circleci/ruby:2.6.3-node
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-ruby-deps-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: Install dependencies
-          command: bundle check --path vendor/bundle || bundle install --deployment
-      - save_cache:
-          key: v1-ruby-deps-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
   test:
     docker:
       - image: circleci/ruby:2.6.3-node
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-ruby-deps-{{ checksum "Gemfile.lock" }}
       - run:
           name: Install dependencies
-          command: bundle check --path vendor/bundle || bundle install --deployment
-      - run: bundle exec rspec
+          command: bundle install
+      - run: bundle exec rspec -fd
+
+  test_with_elastic:
+    environment:
+      ELASTIC_SEARCH_VERSION: '6.2.3'
+    docker:
+      - image: circleci/ruby:2.6.3-node
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: bundle install
+      - run:
+          name: Install Elastic Search
+          command: ./script/install_elasticsearch.sh
+      - run: bundle exec rspec -fd --tag elasticsearch spec/
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - rubydeps
-      - test:
-          requires:
-            - rubydeps
+      - test
+      - test_with_elastic

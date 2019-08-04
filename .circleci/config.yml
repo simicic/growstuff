@@ -16,7 +16,8 @@ jobs: # a collection of steps
           key: v1-ruby-deps-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundleworkflows:
+workflows:
   version: 2
-  build_and_test:
+  build_and_deploy:
     jobs:
       - rubydeps

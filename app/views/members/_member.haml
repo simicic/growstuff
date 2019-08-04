@@ -13,16 +13,16 @@
       - if member.location.present?
         %span.badge.badge-success
           = icon 'fas', 'map-marker'
-          = member.location
+          = truncate(member.location, length: 50, separator: ' ', omission: '... ')
 
       %p
         %ul.nav.nav-justified.small
           %li.nav-item.border-right
             = link_to member_plantings_path(member) do
-              = localize_plural(member.plantings.active.size, Planting)
+              = localize_plural(member.plantings.active, Planting)
           %li.nav-item.border-right
             = link_to member_harvests_path(member) do
-              = localize_plural(member.harvests.size, Harvest)
+              = localize_plural(member.harvests, Harvest)
           %li.nav-item
             = link_to member_seeds_path(member) do
-              = localize_plural(member.seeds.active.size, Seed)
+              = localize_plural(member.seeds.active, Seed)
